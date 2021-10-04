@@ -130,3 +130,5 @@ dmypy.json
 
 # hide root certificate
 root.crt
+
+.idea
