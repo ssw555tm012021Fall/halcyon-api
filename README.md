@@ -9,7 +9,7 @@ Halcyon Backend
 1. Activate virtual environment
     - Windows
         ```
-        env\\Scripts\\activate
+        env\Scripts\activate
         ```
     - Mac/Linux
         ```
