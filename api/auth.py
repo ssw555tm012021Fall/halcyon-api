@@ -2,7 +2,7 @@ from server import bcrypt
 from data.employee import Employee
 from service.employee_service import get_employee_by_email, add_employee, get_employee_by_id
 
-from flask import request, make_response, jsonify
+from flask import request, make_response, jsonify, re
 from flask.views import MethodView
 
 
@@ -14,6 +14,15 @@ class RegisterAPI(MethodView):
     def post(self):
         # get the post data
         post_data = request.get_json()
+        # email validation
+        pattern = re.compile("^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|((stevens\.edu)))$")
+        if pattern.match(post_data.get('email')):
+            responseObject = {
+                'status': 'fail',
+                'message': 'Invalid email',
+            }
+            return make_response(jsonify(responseObject)), 202
+           
         # check if user already exists
         employee = get_employee_by_email(post_data.get('email'))
         if not employee:
