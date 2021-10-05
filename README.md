@@ -9,7 +9,7 @@ Halcyon Backend
 1. Activate virtual environment
     - Windows
         ```
-        env/Scripts/activate
+        env\\Scripts\\activate
         ```
     - Mac/Linux
         ```
@@ -22,6 +22,11 @@ Halcyon Backend
     ```
 
 1. keep downloaded CA certificate `root.crt` in the root of the repo 
+    ```
+    > cd repo_root_dir
+    > curl --create-dirs -o root.crt -O https://cockroachlabs.cloud/clusters/9c750309-b4c4-482e-92ef-8b1521cf223f/cert
+    ```
+   Replace `repo_root_dir` with your project's directory path & URL should change according to the cluster on CockroachDB.
 
 ## Run the project
 In the root of the project run 
