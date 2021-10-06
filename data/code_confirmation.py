@@ -1,36 +1,34 @@
+"""
+    File name: code_confirmation.py
+    Added by: Farah Elkourdi
+    Date created: 10/06/2021
+    Date last modified: 10/06/2021
+    Description:Code confirmation data
+"""
 import datetime
 import jwt
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, TIME
+from sqlalchemy.types import Date
 from data.db import Base
-from server import app, bcrypt, BCRYPT_LOG_ROUNDS
-from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR
 
-class Employee(Base):
-    """The Employee class corresponds to the "employee" database table.
+class code_confirmation(Base):
+    """The code_confirmation class corresponds to the "code_confirmation" database table.
     """
-    __tablename__ = 'employee'
+    __tablename__ = 'code_confirmation'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    email = Column(String)
-    password = Column(String)
-    first_name = Column(String)
-    last_name = Column(String)
-    is_confirmed = Column(BOOLEAN)
-    birthday = Column(DateTime)
-    gender = Column(CHAR)
+    employee_id = Column(Integer)
+    code = Column(Integer)
+    expiry_date = Column(Date)
+    code_confirmation_time = Column(TIME)
 
-    def __init__(self, email, password, first_name, is_confirmed,last_name,birthday,gender):
+    def __init__(self, employee_id, code, expiry_date, code_confirmation_time):
         """
-        TODO: add all the fields of Employee
+        TODO: add all the fields of code_confirmation
         """
-        self.email = email
-        self.password = bcrypt.generate_password_hash(
-            password, BCRYPT_LOG_ROUNDS
-        ).decode()
-        self.first_name = first_name
-        self.is_confirmed = is_confirmed
-        self.last_name = last_name
-        self.birthday = birthday
-        self.gender = gender
+        self.employee_id = employee_id
+        self.code = code
+        self.expiry_date = expiry_date
+        self.code_confirmation_time = code_confirmation_time
         # self.created = datetime.datetime.now()
 
     def encode_auth_token(self, user_id):
