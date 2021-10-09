@@ -44,7 +44,7 @@ class RegisterAPI(MethodView):
 
         # email validation constraint - by kavish
         pattern = re.compile("^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|((stevens\.edu)))$")
-        if pattern.match(post_data.get('email')):
+        if not pattern.match(post_data.get('email')):
             responseObject = {
                 'status': 'fail',
                 'message': 'Invalid email',
