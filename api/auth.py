@@ -30,7 +30,7 @@ class RegisterAPI(MethodView):
 
                 # email validation (added by kavish)
                 pattern = re.compile("^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|((stevens\.edu)))$")
-                if pattern.match(user_email):
+                if not pattern.match(user_email):
                     responseObject = {
                         'status': 'fail',
                         'message': 'Invalid email',
