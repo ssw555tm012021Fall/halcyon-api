@@ -3,6 +3,7 @@ from flask import g, request, make_response, jsonify, url_for
 from data.employee import Employee
 from service.employee_service import get_employee_by_id
 
+
 def authorize(f):
     @wraps(f)
     def decorated_function(*args, **kws):
