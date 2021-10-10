@@ -21,6 +21,9 @@ class RoomAvailabilityAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 401
         room_availability_map_list = get_room_availability_map(room, datetime.date(datetime.today()))
+        for room_map in room_availability_map_list:
+            room_map['start_time'] = room_map['start_time'].strftime("%H:%M:%S")
+            room_map['end_time'] = room_map['end_time'].strftime("%H:%M:%S")
         responseObject = {
             'status': 'success',
             'available_rooms': room_availability_map_list
