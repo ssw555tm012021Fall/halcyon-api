@@ -5,24 +5,25 @@ from data.db import Base
 from server import app, bcrypt, BCRYPT_LOG_ROUNDS
 from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR
 
-class Meditation(Base):
-    """The Meditation class corresponds to the "meditationß" database table.
+class Reservation(Base):
+    """The Reservation class corresponds to the "reservation" database table.
     """
-    __tablename__ = 'meditation_room'
+    __tablename__ = 'reservation'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    room_name = Column(String)
-    description = Column(String)
-    time_interval = Column(Integer)
-    start_available_time = Column(DateTime)
-    end_available_time = Column(DateTime)
+    meditation_room_id = Column(Integer)
+    employee_id = Column(Integer)
+    date_reservation = Column(DateTime)
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
 
 
-    def __init__(self, room_name: str, description: str, time_interval: int, start_available_time: datetime, end_available_time: datetime):
-        self.room_name = room_name
-        self.description = description
-        self.time_interval = time_interval
-        self.start_available_time = start_available_time
-        self.end_available_time = end_available_time
+
+    def __init__(self, employee_id: int, meditation_room_id:int, date_reservation: datetime, start_time: datetime, end_time: datetime):
+        self.employee_id = employee_id
+        self.meditation_room_id = meditation_room_id
+        self.date_reservation = date_reservation
+        self.start_time = start_time
+        self.end_time = end_time
 
     def encode_auth_token(self, user_id):
         """

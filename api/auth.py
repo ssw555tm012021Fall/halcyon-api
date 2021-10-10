@@ -1,18 +1,24 @@
 import re
 import datetime
+
+from service.reserve_room_service import get_reservation, add_reservation_return_id, add_room_reserved_return_id, \
+    add_room_reserved
 from shared.common import send_email, generate_code, check_password
 from server import bcrypt
 from data.employee import Employee
+from data.reservation import Reservation
+from data.rooms import Rooms
+from data.meditation import Meditation
 from data.code_confirmation import code_confirmation
 from service.employee_service import get_employee_by_email, add_employee, get_employee_by_id, add_employee_return_id
 from service.employee_service import activate_account
 from service.code_confirmation_service import add_code_confirmation, get_code_confirmation_by_employee_id, update_code
-from flask import g, request, make_response, jsonify
+from flask import request, make_response, jsonify
 from flask.views import MethodView
 from datetime import date
 from jinja2 import Environment, FileSystemLoader
 from sqlalchemy.sql.expression import false
-from shared.authorize import authorize
+
 
 class RegisterAPI(MethodView):
     """
@@ -30,7 +36,7 @@ class RegisterAPI(MethodView):
 
                 # email validation (added by kavish)
                 pattern = re.compile("^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|((stevens\.edu)))$")
-                if not pattern.match(user_email):
+                if pattern.match(user_email):
                     responseObject = {
                         'status': 'fail',
                         'message': 'Invalid email',
@@ -145,21 +151,45 @@ class LoginAPI(MethodView):
 class UserAPI(MethodView):
     """
     User Resource
-    This demonstrates how the @authorize decorator works
-    Just place this decorator in request method to authorize the request
-
-    g.user is Employee object so g.user.id is Employee.id
     """
-    @authorize
+
     def get(self):
-        responseObject = {
-            'status': 'success',
-            'data': {
-                'user_id': g.user.id,
-                'email': g.user.email
+        # get the auth token
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            try:
+                auth_token = auth_header.split(" ")[1]
+            except IndexError:
+                responseObject = {
+                    'status': 'fail',
+                    'message': 'Bearer token malformed.'
+                }
+                return make_response(jsonify(responseObject)), 401
+        else:
+            auth_token = ''
+        if auth_token:
+            resp = Employee.decode_auth_token(auth_token)
+            if not isinstance(resp, str):
+                user = get_employee_by_id(id=resp)
+                responseObject = {
+                    'status': 'success',
+                    'data': {
+                        'user_id': user.id,
+                        'email': user.email
+                    }
+                }
+                return make_response(jsonify(responseObject)), 200
+            responseObject = {
+                'status': 'fail',
+                'message': resp
             }
-        }
-        return make_response(jsonify(responseObject)), 200
+            return make_response(jsonify(responseObject)), 401
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return make_response(jsonify(responseObject)), 401
 
 
 class LogoutAPI(MethodView):
@@ -273,7 +303,6 @@ class ConfirmationAPI(MethodView):
             return make_response(jsonify(responseObject)), 401
 
 
-
 class ResendAPI(MethodView):
     """
     Resend verification code
@@ -327,6 +356,77 @@ class ResendAPI(MethodView):
                 'message': 'Error, user does not exist.',
             }
             return make_response(jsonify(responseObject)), 401
+
+
+class RoomReserved(MethodView):
+    """
+    User Resource
+    """
+    from service.reserve_room_service import get_reservation, get_meditatoin_room_by_id, get_room_reserved_by_id, get_reservation_by_id, add_room_reserved_return_id, add_reservation_return_id
+
+    def post(self):
+        # get auth token
+        auth_header = request.headers.get('Authorization')
+        if auth_header:
+            auth_token = auth_header.split(" ")[1]
+        else:
+            auth_token = ''
+
+        if auth_token:
+            resp = Reservation.decode_auth_token(auth_token)
+            if isinstance(resp, str):
+                post_data = request.get_json()
+
+                meditation_room_id = post_data.get('meditation_room_id')
+                employee_id = post_data.get('employee_id')
+                date = post_data.get('date')
+                start_time = post_data.get('start_time')
+                end_time = post_data.get('end_time')
+                try:
+                    reservation = get_reservation(meditation_room_id, date, start_time, end_time)
+
+                    if reservation is None:
+                        new_reservation = Reservation(
+                            meditation_room_id = meditation_room_id,
+                            employee_id=employee_id,
+                            date_reservation = date,
+                            start_time = start_time,
+                            end_time = end_time
+                        )
+                        new_reservation = add_reservation_return_id(new_reservation)
+                        add_room_reserved_return_id(Rooms(meditation_room_id=int(meditation_room_id), reservation_id=int(new_reservation.id)))
+                        responseObject = {
+                        'status': 'success',
+                        'message': 'Reservation created'
+                        }
+                        return make_response(jsonify(responseObject)), 200
+                    else:
+                        responseObject = {
+                        'status': 'success',
+                        'message': 'Room is already reserved'
+                        }
+                        return make_response(jsonify(responseObject)), 200
+                except Exception as e:
+                    responseObject = {
+                        'status': 'fail',
+                        'message': e
+                    }
+                    return make_response(jsonify(responseObject)), 202
+            else:
+                responseObject = {
+                    'status': 'fail',
+                    'message': resp
+                }
+                return make_response(jsonify(responseObject)), 401
+        else:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Provide a valid auth token.'
+            }
+            return make_response(jsonify(responseObject)), 403
+
+
+
 # define the API resources
 registration_view = RegisterAPI.as_view('register_api')
 login_view = LoginAPI.as_view('login_api')
@@ -334,3 +434,4 @@ user_view = UserAPI.as_view('user_api')
 logout_view = LogoutAPI.as_view('logout_api')
 confirmation_view = ConfirmationAPI.as_view('confirmation_api')
 resend_view = ResendAPI.as_view('resend_api')
+reserve_room_view = RoomReserved.as_view('reservation_api')
