@@ -11,7 +11,6 @@ from flask import g, request, make_response, jsonify
 from flask.views import MethodView
 from datetime import date
 from jinja2 import Environment, FileSystemLoader
-from sqlalchemy.sql.expression import false
 from shared.authorize import authorize
 from service.reserve_room_service import get_reservation, get_meditatoin_room_by_id, get_room_reserved_by_id, get_reservation_by_id, add_room_reserved_return_id, add_reservation_return_id
 
@@ -136,7 +135,7 @@ class LoginAPI(MethodView):
             else:
                 responseObject = {
                     'status': 'fail',
-                    'message': 'User does not exist.'
+                    'message': 'Invalid credentials.'
                 }
                 return make_response(jsonify(responseObject)), 404
         except Exception as e:

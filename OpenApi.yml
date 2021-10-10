@@ -38,12 +38,17 @@ components:
         end_available_time:
           type: string 
           format: date-time
-    rooms_time:
+    time_slots:
       type: object
       properties:
-        time:
+        available:
+          type: boolean
+        end_time:
           type: string 
-          format: date-time
+          format: time
+        start_time:
+          type: string
+          format: time
 
 security:
   - bearerAuth: [] 
@@ -124,9 +129,14 @@ paths:
           content:
             application/json:
               schema: 
-                type: array
-                items: 
-                  $ref: '#/components/schemas/rooms_time'
+                type: object
+                properties:
+                  available_rooms:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/time_slots'
+                  status:
+                    type: string
   /rooms/{roomId}/book:
     post:
       security:
@@ -176,16 +186,17 @@ paths:
                     type: boolean
                   message:
                     type: string
+  /reservation/{reservationId}:
     put:
       security:
         - bearerAuth: []
       parameters:
         - in: path
-          name: roomId
+          name: reservationId
           schema:
             type: integer
           required: true
-          description: Numeric ID of the room
+          description: Numeric ID of the reservation to be updated
       requestBody:
         required: true
         content:
@@ -193,11 +204,14 @@ paths:
             schema:
               type: object
               properties:
-                time: 
+                meditation_room_id:
+                  type: integer
+                start_time:
                   type: string
-                  format: 'date-time'
-                reservationId:
-                  type: number
+                  format: 'time'
+                end_time:
+                  type: string
+                  format: 'time'
       summary: Replace existing reservation with a new one
       responses:
         '401':
@@ -213,8 +227,10 @@ paths:
               schema: 
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  message:
+                    type: string
+                  status:
+                    type: string
         '409':    
           description: 'If there is a conflict booking the room'
           content:
