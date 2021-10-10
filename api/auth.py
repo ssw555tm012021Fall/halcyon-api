@@ -1,30 +1,27 @@
 import re
 import datetime
-
-from service.reserve_room_service import get_reservation, add_reservation_return_id, add_room_reserved_return_id, \
-    add_room_reserved
 from shared.common import send_email, generate_code, check_password
 from server import bcrypt
 from data.employee import Employee
-from data.reservation import Reservation
-from data.rooms import Rooms
-from data.meditation import Meditation
 from data.code_confirmation import code_confirmation
 from service.employee_service import get_employee_by_email, add_employee, get_employee_by_id, add_employee_return_id
 from service.employee_service import activate_account
 from service.code_confirmation_service import add_code_confirmation, get_code_confirmation_by_employee_id, update_code
-from flask import request, make_response, jsonify
+from flask import g, request, make_response, jsonify
 from flask.views import MethodView
 from datetime import date
 from jinja2 import Environment, FileSystemLoader
 from sqlalchemy.sql.expression import false
+from shared.authorize import authorize
+from service.reserve_room_service import get_reservation, get_meditatoin_room_by_id, get_room_reserved_by_id, get_reservation_by_id, add_room_reserved_return_id, add_reservation_return_id
 
 
 class RegisterAPI(MethodView):
     """
     User Registration Resource 
     Added by: FR7 ~ Farah Elkourdi
-    """      
+    """
+
     def post(self):
         # get the post data
         post_data = request.get_json()
@@ -32,10 +29,11 @@ class RegisterAPI(MethodView):
         employee = get_employee_by_email(post_data.get('email'))
         if not employee:
             try:
-                user_email=post_data.get('email')
+                user_email = post_data.get('email')
 
                 # email validation (added by kavish)
-                pattern = re.compile("^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|((stevens\.edu)))$")
+                pattern = re.compile(
+                    "^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|((stevens\.edu)))$")
                 if not pattern.match(user_email):
                     responseObject = {
                         'status': 'fail',
@@ -43,24 +41,24 @@ class RegisterAPI(MethodView):
                     }
                     return make_response(jsonify(responseObject)), 202
                 # end 
-                
-                user_pass=post_data.get('password')
+
+                user_pass = post_data.get('password')
                 if (user_pass is not None and not check_password(user_pass)):
                     responseObject = {
-                    'status': 'fail',
-                    'message': 'Password length should be greater or equal to 8, include one capital \
+                        'status': 'fail',
+                        'message': 'Password length should be greater or equal to 8, include one capital \
                      letter, one small letter, and one number.'
                     }
-                    return make_response(jsonify(responseObject)), 401                
+                    return make_response(jsonify(responseObject)), 401
 
                 employee = Employee(
                     email=user_email,
                     password=user_pass,
-                    is_confirmed = False,
-                    first_name = 'User',
-                    last_name = 'User',
-                    birthday = "1990-01-01",
-                    gender = 'f'
+                    is_confirmed=False,
+                    first_name='User',
+                    last_name='User',
+                    birthday="1990-01-01",
+                    gender='f'
                 )
                 # insert the employee
                 saved_employee = add_employee_return_id(employee)
@@ -69,10 +67,10 @@ class RegisterAPI(MethodView):
                 code_ints = generate_code()
 
                 code = code_confirmation(
-                    employee_id= saved_employee.id,
-                    code= code_ints,
-                    expiry_date = date.today(),
-                    code_confirmation_time = datetime.datetime.now().time()
+                    employee_id=saved_employee.id,
+                    code=code_ints,
+                    expiry_date=date.today(),
+                    code_confirmation_time=datetime.datetime.now().time()
                 )
 
                 # insert the code_confirmation
@@ -91,7 +89,7 @@ class RegisterAPI(MethodView):
                 templateEnv = Environment(loader=templateLoader)
                 TEMPLATE_FILE = "code_email_template.html"
                 template = templateEnv.get_template(TEMPLATE_FILE)
-                output = template.render(user_name= saved_employee.first_name, code= code_ints)
+                output = template.render(user_name=saved_employee.first_name, code=code_ints)
                 send_email(saved_employee.email, output)
 
                 return make_response(jsonify(responseObject)), 201
@@ -108,6 +106,7 @@ class RegisterAPI(MethodView):
                 'message': 'User already exists. Please Log in.',
             }
             return make_response(jsonify(responseObject)), 202
+
 
 class LoginAPI(MethodView):
     """
@@ -151,45 +150,22 @@ class LoginAPI(MethodView):
 class UserAPI(MethodView):
     """
     User Resource
+    This demonstrates how the @authorize decorator works
+    Just place this decorator in request method to authorize the request
+
+    g.user is Employee object so g.user.id is Employee.id
     """
 
+    @authorize
     def get(self):
-        # get the auth token
-        auth_header = request.headers.get('Authorization')
-        if auth_header:
-            try:
-                auth_token = auth_header.split(" ")[1]
-            except IndexError:
-                responseObject = {
-                    'status': 'fail',
-                    'message': 'Bearer token malformed.'
-                }
-                return make_response(jsonify(responseObject)), 401
-        else:
-            auth_token = ''
-        if auth_token:
-            resp = Employee.decode_auth_token(auth_token)
-            if not isinstance(resp, str):
-                user = get_employee_by_id(id=resp)
-                responseObject = {
-                    'status': 'success',
-                    'data': {
-                        'user_id': user.id,
-                        'email': user.email
-                    }
-                }
-                return make_response(jsonify(responseObject)), 200
-            responseObject = {
-                'status': 'fail',
-                'message': resp
+        responseObject = {
+            'status': 'success',
+            'data': {
+                'user_id': g.user.id,
+                'email': g.user.email
             }
-            return make_response(jsonify(responseObject)), 401
-        else:
-            responseObject = {
-                'status': 'fail',
-                'message': 'Provide a valid auth token.'
-            }
-            return make_response(jsonify(responseObject)), 401
+        }
+        return make_response(jsonify(responseObject)), 200
 
 
 class LogoutAPI(MethodView):
@@ -239,6 +215,7 @@ class ConfirmationAPI(MethodView):
     Activate account
     Added by : FR7 
     """
+
     def post(self):
         # get the post data
         post_data = request.get_json()
@@ -260,20 +237,20 @@ class ConfirmationAPI(MethodView):
                 # compare codes
                 if code.code != post_data.get('code'):
                     responseObject = {
-                    'status': 'fail',
-                    'message': 'Error, code not matched.'
+                        'status': 'fail',
+                        'message': 'Error, code not matched.'
                     }
-                    return make_response(jsonify(responseObject)), 401     
+                    return make_response(jsonify(responseObject)), 401
 
-                # check if code is still available < 24 hours 
+                    # check if code is still available < 24 hours
                 get_code_datetime = str(code.expiry_date) + " " + code.code_confirmation_time.strftime("%H:%M")
                 confirmation_datetime = datetime.datetime.strptime(get_code_datetime, "%Y-%m-%d %H:%M")
                 now_datetime = datetime.datetime.now()
-                difference = now_datetime - confirmation_datetime 
-                if difference.days != 0 :
+                difference = now_datetime - confirmation_datetime
+                if difference.days != 0:
                     responseObject = {
-                    'status': 'fail',
-                    'message': 'Error, code is available for 24 hours only.'
+                        'status': 'fail',
+                        'message': 'Error, code is available for 24 hours only.'
                     }
                     return make_response(jsonify(responseObject)), 401
 
@@ -308,6 +285,7 @@ class ResendAPI(MethodView):
     Resend verification code
     Added by : FR7 
     """
+
     def post(self):
         # get the post data
         post_data = request.get_json()
@@ -332,7 +310,7 @@ class ResendAPI(MethodView):
                 templateEnv = Environment(loader=templateLoader)
                 TEMPLATE_FILE = "code_email_template.html"
                 template = templateEnv.get_template(TEMPLATE_FILE)
-                output = template.render(user_name= employee.first_name, code= new_code)
+                output = template.render(user_name=employee.first_name, code=new_code)
                 send_email(employee.email, output)
 
                 # generate the auth token
@@ -356,75 +334,6 @@ class ResendAPI(MethodView):
                 'message': 'Error, user does not exist.',
             }
             return make_response(jsonify(responseObject)), 401
-
-
-class RoomReserved(MethodView):
-    """
-    User Resource
-    """
-    from service.reserve_room_service import get_reservation, get_meditatoin_room_by_id, get_room_reserved_by_id, get_reservation_by_id, add_room_reserved_return_id, add_reservation_return_id
-
-    def post(self):
-        # get auth token
-        auth_header = request.headers.get('Authorization')
-        if auth_header:
-            auth_token = auth_header.split(" ")[1]
-        else:
-            auth_token = ''
-
-        if auth_token:
-            resp = Reservation.decode_auth_token(auth_token)
-            if isinstance(resp, str):
-                post_data = request.get_json()
-
-                meditation_room_id = post_data.get('meditation_room_id')
-                employee_id = post_data.get('employee_id')
-                date = post_data.get('date')
-                start_time = post_data.get('start_time')
-                end_time = post_data.get('end_time')
-                try:
-                    reservation = get_reservation(meditation_room_id, date, start_time, end_time)
-
-                    if reservation is None:
-                        new_reservation = Reservation(
-                            meditation_room_id = meditation_room_id,
-                            employee_id=employee_id,
-                            date_reservation = date,
-                            start_time = start_time,
-                            end_time = end_time
-                        )
-                        new_reservation = add_reservation_return_id(new_reservation)
-                        add_room_reserved_return_id(Rooms(meditation_room_id=int(meditation_room_id), reservation_id=int(new_reservation.id)))
-                        responseObject = {
-                        'status': 'success',
-                        'message': 'Reservation created'
-                        }
-                        return make_response(jsonify(responseObject)), 200
-                    else:
-                        responseObject = {
-                        'status': 'success',
-                        'message': 'Room is already reserved'
-                        }
-                        return make_response(jsonify(responseObject)), 200
-                except Exception as e:
-                    responseObject = {
-                        'status': 'fail',
-                        'message': e
-                    }
-                    return make_response(jsonify(responseObject)), 202
-            else:
-                responseObject = {
-                    'status': 'fail',
-                    'message': resp
-                }
-                return make_response(jsonify(responseObject)), 401
-        else:
-            responseObject = {
-                'status': 'fail',
-                'message': 'Provide a valid auth token.'
-            }
-            return make_response(jsonify(responseObject)), 403
-
 
 
 # define the API resources
