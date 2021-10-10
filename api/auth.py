@@ -7,12 +7,12 @@ from data.code_confirmation import code_confirmation
 from service.employee_service import get_employee_by_email, add_employee, get_employee_by_id, add_employee_return_id
 from service.employee_service import activate_account
 from service.code_confirmation_service import add_code_confirmation, get_code_confirmation_by_employee_id, update_code
-from flask import request, make_response, jsonify
+from flask import g, request, make_response, jsonify
 from flask.views import MethodView
 from datetime import date
 from jinja2 import Environment, FileSystemLoader
 from sqlalchemy.sql.expression import false
-
+from shared.authorize import authorize
 
 class RegisterAPI(MethodView):
     """
@@ -145,45 +145,21 @@ class LoginAPI(MethodView):
 class UserAPI(MethodView):
     """
     User Resource
-    """
+    This demonstrates how the @authorize decorator works
+    Just place this decorator in request method to authorize the request
 
+    g.user is Employee object so g.user.id is Employee.id
+    """
+    @authorize
     def get(self):
-        # get the auth token
-        auth_header = request.headers.get('Authorization')
-        if auth_header:
-            try:
-                auth_token = auth_header.split(" ")[1]
-            except IndexError:
-                responseObject = {
-                    'status': 'fail',
-                    'message': 'Bearer token malformed.'
-                }
-                return make_response(jsonify(responseObject)), 401
-        else:
-            auth_token = ''
-        if auth_token:
-            resp = Employee.decode_auth_token(auth_token)
-            if not isinstance(resp, str):
-                user = get_employee_by_id(id=resp)
-                responseObject = {
-                    'status': 'success',
-                    'data': {
-                        'user_id': user.id,
-                        'email': user.email
-                    }
-                }
-                return make_response(jsonify(responseObject)), 200
-            responseObject = {
-                'status': 'fail',
-                'message': resp
+        responseObject = {
+            'status': 'success',
+            'data': {
+                'user_id': g.user.id,
+                'email': g.user.email
             }
-            return make_response(jsonify(responseObject)), 401
-        else:
-            responseObject = {
-                'status': 'fail',
-                'message': 'Provide a valid auth token.'
-            }
-            return make_response(jsonify(responseObject)), 401
+        }
+        return make_response(jsonify(responseObject)), 200
 
 
 class LogoutAPI(MethodView):
