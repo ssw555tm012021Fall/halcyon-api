@@ -101,6 +101,11 @@ def get_reservation_by_id(reservation_id):
     """ get Reservation object searched from primary key """
     return session.query(Reservation).get(reservation_id)
 
+def get_reservation_by_id_and_employee_id(reservation_id, employee_id):
+    """ get Reservation object searched from primary key and employee_id """
+    return session.query(Reservation).filter(
+        Reservation.id == reservation_id).filter(Reservation.employee_id == employee_id).first()
+
 
 def get_reservation(meditation_room_id, date_reservation, start_time, end_time):
     return session.query(Reservation).filter(Reservation.meditation_room_id == meditation_room_id,
