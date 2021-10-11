@@ -5,5 +5,8 @@ dist: xenial
 
 language: python
 
+before_install:
+  - curl --create-dirs -o root.crt -O https://cockroachlabs.cloud/clusters/9c750309-b4c4-482e-92ef-8b1521cf223f/cert
+
 script:
   - python -m pytest -v
