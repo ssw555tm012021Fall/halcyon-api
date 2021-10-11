@@ -3,9 +3,13 @@ from datetime import datetime
 from flask import g, make_response, jsonify, request
 from flask.views import MethodView
 
+from data.reservation import Reservation
+from data.room import Room
+from service.reserve_room_service import add_reservation_return_id, add_room_reserved_return_id
 from service.room_service import get_room_by_id, generate_room_times, get_room_availability_map, get_reservation, \
-    update_reservation, get_reservation_all_fields, get_reservation_by_id
+    update_reservation, get_reservation_all_fields, get_reservation_by_id, get_reservation_by_id_and_employee_id
 from shared.authorize import authorize
+
 
 class RoomAvailabilityAPI(MethodView):
     @authorize
@@ -36,6 +40,7 @@ class RoomAvailabilityAPI(MethodView):
             'time_slots': room_availability_map_list
         }
         return make_response(jsonify(responseObject)), 200
+
 
 class RoomReserved(MethodView):
     """
@@ -73,7 +78,7 @@ class RoomReserved(MethodView):
                             end_time = end_time
                         )
                         new_reservation = add_reservation_return_id(new_reservation)
-                        add_room_reserved_return_id(Rooms(meditation_room_id=int(meditation_room_id), reservation_id=int(new_reservation.id)))
+                        add_room_reserved_return_id(Room(meditation_room_id=int(meditation_room_id), reservation_id=int(new_reservation.id)))
                         responseObject = {
                         'status': 'success',
                         'message': 'Reservation created'
@@ -115,7 +120,7 @@ class ReservationUpdateAPI(MethodView):
             Returns:
                     updated reservation object
             """
-        reservation = get_reservation_by_id(reservationId)
+        reservation = get_reservation_by_id_and_employee_id(reservationId, g.user.id)
         # room = get_room_by_id(roomId)
         if not reservation:
             responseObject = {
@@ -164,3 +169,4 @@ class ReservationUpdateAPI(MethodView):
 
 room_available_time_view = RoomAvailabilityAPI.as_view('room_availability')
 reservation_update_view = ReservationUpdateAPI.as_view('reservation_update')
+reserve_room_view = RoomReserved.as_view('reservation_api')
