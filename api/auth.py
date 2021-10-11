@@ -16,6 +16,7 @@ from shared.authorize import authorize
 from service.reserve_room_service import get_reservation, get_meditatoin_room_by_id, get_room_reserved_by_id, get_reservation_by_id, add_room_reserved_return_id, add_reservation_return_id
 
 
+
 class RegisterAPI(MethodView):
     """
     User Registration Resource 

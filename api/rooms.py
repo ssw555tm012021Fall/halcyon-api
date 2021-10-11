@@ -27,8 +27,6 @@ class RoomAvailabilityAPI(MethodView):
         }
         return make_response(jsonify(responseObject)), 200
 
-room_available_time_view = RoomAvailabilityAPI.as_view('room_availability')
-
 class RoomReserved(MethodView):
     """
     User Resource
@@ -95,3 +93,6 @@ class RoomReserved(MethodView):
                 'message': 'Provide a valid auth token.'
             }
             return make_response(jsonify(responseObject)), 403
+
+room_available_time_view = RoomAvailabilityAPI.as_view('room_availability')
+reserve_room_view = RoomReserved.as_view('reservation_api')
