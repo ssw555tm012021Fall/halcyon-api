@@ -51,3 +51,18 @@ def check_password (user_pass):
     else:
         flag = True          
     return flag
+
+
+def is_dirty(myobj):
+    """
+    check if any value in object is changed from its previous values
+    """
+    from sqlalchemy.orm import class_mapper
+    from sqlalchemy import inspect
+    inspr = inspect(myobj)
+    attrs = class_mapper(myobj.__class__).column_attrs  # exclude relationships
+    for attr in attrs:
+        hist = getattr(inspr.attrs, attr.key).history
+        if hist.has_changes():
+            return True
+    return False
