@@ -1,7 +1,8 @@
 from flask import Blueprint
 
 from api.auth import registration_view, login_view, user_view, logout_view, confirmation_view, resend_view
-from api.rooms import room_available_time_view, reserve_room_view, reservation_update_view
+from api.rooms import room_available_time_view, reserve_room_view, reservation_update_view, reservation_delete_view, \
+    show_rooms_view, reservation_view
 
 blueprints = Blueprint('auth', __name__)
 
@@ -42,7 +43,16 @@ blueprints.add_url_rule(
     view_func=room_available_time_view,
     methods=['GET']
 )
-
+blueprints.add_url_rule(
+    '/rooms/show',
+    view_func=show_rooms_view,
+    methods=['GET']
+)
+blueprints.add_url_rule(
+    '/rooms/reservation',
+    view_func=reservation_view,
+    methods=['POST']
+)
 
 # Reservations
 blueprints.add_url_rule(
@@ -54,4 +64,9 @@ blueprints.add_url_rule(
     '/reservation/<reservationId>',
     view_func=reservation_update_view,
     methods=['PUT']
+)
+blueprints.add_url_rule(
+    '/reservation/<reservationId>',
+    view_func=reservation_delete_view,
+    methods=['DELETE']
 )

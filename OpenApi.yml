@@ -231,22 +231,34 @@ paths:
                     type: string
                   status:
                     type: string
+        '404':
+          description: 'If reservation with provided id not found under logged in user s account'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
         '409':    
-          description: 'If there is a conflict booking the room'
+          description: 'If there is a conflict booking the room or error in updating the reservation'
           content:
             application/json:
               schema: 
                 type: object
                 properties:
-                  success:
-                    type: boolean
+                  error:
+                    type: string
                   message:
                     type: string
-  /rooms/cancel:
-    post:
+                  status:
+                    type: string
+    delete:
       security:
         - bearerAuth: []
-      summary: Cancel a booking reservation
+      summary: Cancel a booked reservation
       responses:
         '401':
           description: 'Missing authorization header'
@@ -258,21 +270,34 @@ paths:
           description: Success message
           content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-        '404':    
-          description: 'The user do not have a booking appointment'
-          content:
-            application/json:
-              schema: 
-                type: object
-                properties:
-                  success:
-                    type: boolean
                   message:
                     type: string
-                  
-                  
+                  status:
+                    type: string
+        '404':
+          description: 'If reservation with provided id not found under logged in user s account'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  status:
+                    type: string
+        '409':
+          description: 'If there is an error in cancelling the reservation'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  status:
+                    type: string
