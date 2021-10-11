@@ -101,6 +101,7 @@ def get_reservation_by_id(reservation_id):
     """ get Reservation object searched from primary key """
     return session.query(Reservation).get(reservation_id)
 
+
 def get_reservation_by_id_and_employee_id(reservation_id, employee_id):
     """ get Reservation object searched from primary key and employee_id """
     return session.query(Reservation).filter(
@@ -134,6 +135,7 @@ def update_reservation(reservation):
             session.commit()
     return reservation
 
+
 def get_rooms():
     rooms = session.query(Room).all()
     room_list = []
@@ -148,6 +150,12 @@ def get_rooms():
         room_list.append(room_map)
     return room_list
 
+
 def get_room_details(room_id):
     room = session.query(Room).filter(Room.id == room_id).first()
     return room
+
+
+def delete_reservation(reservation):
+    session.delete(reservation)
+    session.commit()
