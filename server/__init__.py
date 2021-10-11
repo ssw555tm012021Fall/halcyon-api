@@ -27,3 +27,8 @@ def route_health():
     return jsonify({
         "health": True
     })
+
+
+@app.route("/test")
+def test():
+    return "Works!"
