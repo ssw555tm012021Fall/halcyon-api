@@ -14,8 +14,10 @@ from sqlalchemy.dialects import registry
 registry.register("cockroachdb", "cockroachdb.sqlalchemy.dialect",
                   "CockroachDBDialect")
 
+# conn_string = "cockroachdb://kavish:erKaCOuWe-zIMxPe@free-tier.gcp-us-central1.cockroachlabs.cloud:26257" \
+#                   "/second-jaguar-3728.defaultdb?sslmode=verify-full&sslrootcert=root.crt"
 conn_string = "cockroachdb://kavish:erKaCOuWe-zIMxPe@free-tier.gcp-us-central1.cockroachlabs.cloud:26257" \
-                  "/second-jaguar-3728.defaultdb?sslmode=verify-full&sslrootcert=root.crt"
+                  "/second-jaguar-3728.defaultdb?sslmode=disable"
 engine = create_engine(os.path.expandvars(conn_string), convert_unicode=True)
 
 session = scoped_session(sessionmaker(autocommit=False,
