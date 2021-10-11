@@ -21,6 +21,7 @@ engine = create_engine(os.path.expandvars(conn_string), convert_unicode=True)
 session = scoped_session(sessionmaker(autocommit=False,
                                                    autoflush=False,
                                                    bind=engine))
+session.verify = True
 sessionmaker = sessionmaker(bind=engine)
 Base = declarative_base()
 Base.query = session.query_property()

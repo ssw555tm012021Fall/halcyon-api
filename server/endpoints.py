@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 from api.auth import registration_view, login_view, user_view, logout_view, confirmation_view, resend_view
-from api.rooms import room_available_time_view
+from api.rooms import room_available_time_view, reserve_room_view
 
 blueprints = Blueprint('auth', __name__)
 
@@ -41,4 +41,9 @@ blueprints.add_url_rule(
     '/rooms/<roomId>',
     view_func=room_available_time_view,
     methods=['GET']
+)
+blueprints.add_url_rule(
+    '/reserve-room',
+    view_func=reserve_room_view,
+    methods=['POST']
 )
