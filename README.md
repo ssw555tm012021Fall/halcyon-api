@@ -1,5 +1,6 @@
 # halcyon-api
 Halcyon Backend
+[![Build Status](https://app.travis-ci.com/ssw555tm012021Fall/halcyon-api.svg?branch=main)](https://app.travis-ci.com/ssw555tm012021Fall/halcyon-api)
 
 ## Setup
 1. Go inside your repo dir (use terminal/command prompt)
