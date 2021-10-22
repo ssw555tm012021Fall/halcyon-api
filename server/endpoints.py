@@ -3,6 +3,7 @@ from flask import Blueprint
 from api.auth import registration_view, login_view, user_view, logout_view, confirmation_view, resend_view
 from api.rooms import room_available_time_view, reserve_room_view, reservation_update_view, reservation_delete_view, \
     show_rooms_view, reservation_view
+from api.sounds import sounds_view
 
 blueprints = Blueprint('auth', __name__)
 
@@ -69,4 +70,11 @@ blueprints.add_url_rule(
     '/reservation/<reservationId>',
     view_func=reservation_delete_view,
     methods=['DELETE']
+)
+
+# sounds 
+blueprints.add_url_rule(
+    '/sounds',
+    view_func=sounds_view,
+    methods=['GET']
 )
