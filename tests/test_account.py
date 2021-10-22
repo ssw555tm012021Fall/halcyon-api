@@ -77,10 +77,3 @@ class AccountTestCases(unittest.TestCase):
         response = self.app.post('http://127.0.0.1:4000/auth/resend', headers={"Content-Type": "application/json"}, data=send_data)
         self.assertEqual(401, response.status_code)
 
-    def test_case_3_resend_code(self):
-        """ Sucessful """
-        send_data = json.dumps({
-            "email": "felkourd@stevens.edu"
-        })
-        response = self.app.post('http://127.0.0.1:4000/auth/resend', headers={"Content-Type": "application/json"}, data=send_data)
-        self.assertEqual(201, response.status_code)
