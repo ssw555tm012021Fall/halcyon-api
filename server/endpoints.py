@@ -62,14 +62,14 @@ blueprints.add_url_rule(
     methods=['POST']
 )
 blueprints.add_url_rule(
-    '/reservation/<reservationId>',
+    '/rooms/<roomId>/update',
     view_func=reservation_update_view,
-    methods=['PUT']
+    methods=['POST']
 )
 blueprints.add_url_rule(
-    '/reservation/<reservationId>',
+    '/rooms/<roomId>/cancel',
     view_func=reservation_delete_view,
-    methods=['DELETE']
+    methods=['POST']
 )
 
 # sounds 
