@@ -3,7 +3,7 @@ from flask.views import MethodView
 from sqlalchemy.sql.expression import false
 
 
-from service.set_goals import update_goal, get_goal_by_id, add_gaol, add_goal_return_id
+from service.set_goals import update_goal, get_goal_by_id, add_goal, add_goal_return_id
 from data.goals import Goals
 from shared.authorize import authorize
 
@@ -29,7 +29,7 @@ class SetGoalsAPI(MethodView):
 
                 new_goal = Goals(
                     target = target,
-                    employee_id=700165948337235729
+                    employee_id = g.user.id
                 )
                 goal = add_goal_return_id(new_goal)
                 if goal is None:
