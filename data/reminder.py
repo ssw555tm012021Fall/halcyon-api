@@ -14,7 +14,7 @@ class ReminderType(enum.Enum):
 class Reminder(Base):
     __tablename__ = 'reminder'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    employeeId = Column('employee_id', Integer)
+    employeeId = Column('employeeId', Integer)
     startAt = Column('start_at', Time)
     endAt = Column('end_at', Time)
     type = Column('type', Enum(ReminderType, values_callable=lambda obj: [e.value for e in obj]))

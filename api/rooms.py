@@ -26,7 +26,7 @@ class RoomAvailabilityAPI(MethodView):
                     roomId (int): primary key of Room
             Returns:
                     array of dictionary:
-                    {available: bool, end_time: str, start_time: bool}
+                    {available: bool, endTime: str, startTime: bool}
             """
         room = get_room_by_id(roomId)
         if not room:
@@ -35,13 +35,22 @@ class RoomAvailabilityAPI(MethodView):
                 'message': 'Room not found!'
             }
             return make_response(jsonify(responseObject)), 401
+
+        room_dict = room.serialize()
+
+        availableTimes = []
         room_availability_map_list = get_room_availability_map(room, datetime.date(datetime.today()))
         for room_map in room_availability_map_list:
-            room_map['start_time'] = room_map['start_time'].strftime("%H:%M:%S")
-            room_map['end_time'] = room_map['end_time'].strftime("%H:%M:%S")
+            room_map['startTime'] = room_map['startTime'].strftime("%H:%M:%S")
+            room_map['endTime'] = room_map['endTime'].strftime("%H:%M:%S")
+            availableTimes.append(room_map['startTime'] + '-' + room_map['endTime'])
+
+        room_dict['availableTimes'] = availableTimes
+        room_dict['timeSlots'] = room_availability_map_list
+
         responseObject = {
             'status': 'success',
-            'time_slots': room_availability_map_list
+            'room': room_dict
         }
         return make_response(jsonify(responseObject)), 200
 
@@ -64,11 +73,11 @@ class RoomReserved(MethodView):
             if isinstance(resp, str):
                 post_data = request.get_json()
 
-                meditation_room_id = post_data.get('meditation_room_id')
-                employee_id = post_data.get('employee_id')
+                meditation_room_id = post_data.get('meditationRoomId')
+                employee_id = post_data.get('employeeId')
                 date = post_data.get('date')
-                start_time = post_data.get('start_time')
-                end_time = post_data.get('end_time')
+                start_time = post_data.get('startTime')
+                end_time = post_data.get('endTime')
                 try:
                     reservation = get_reservation(meditation_room_id, date, start_time, end_time)
 
@@ -132,7 +141,7 @@ class ReservationUpdateAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 404
 
-        if reservation.start_time < datetime.time(datetime.today()):
+        if reservation.startTime < datetime.time(datetime.today()):
             responseObject = {
                 'status': 'fail',
                 'message': 'Reservation start time already passed!'
@@ -141,9 +150,9 @@ class ReservationUpdateAPI(MethodView):
 
         post_data = request.get_json()
 
-        # meditation_room_id = post_data.get('meditation_room_id')
-        start_time = datetime.strptime(post_data.get('start_time'), '%H:%M:%S').time()
-        end_time = datetime.strptime(post_data.get('end_time'), '%H:%M:%S').time()
+        # meditationRoomId = post_data.get('meditationRoomId')
+        start_time = datetime.strptime(post_data.get('startTime'), '%H:%M:%S').time()
+        end_time = datetime.strptime(post_data.get('endTime'), '%H:%M:%S').time()
         date_reservation = datetime.date(datetime.today())
 
         if start_time < datetime.time(datetime.today()) or end_time < datetime.time(datetime.today()):
@@ -154,11 +163,11 @@ class ReservationUpdateAPI(MethodView):
             return make_response(jsonify(responseObject)), 400
 
         try:
-            reservation.employee_id = g.user.id
-            # reservation.meditation_room_id = meditation_room_id
-            reservation.date_reservation = date_reservation
-            reservation.start_time = start_time
-            reservation.end_time = end_time
+            reservation.employeeId = g.user.id
+            # reservation.meditationRoomId = meditationRoomId
+            reservation.date = date_reservation
+            reservation.startTime = start_time
+            reservation.endTime = end_time
 
             updated_reservation = update_reservation(reservation)
             responseObject = {
@@ -269,7 +278,7 @@ class ReservationDeleteAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 404
 
-        if reservation.start_time < datetime.time(datetime.today()):
+        if reservation.startTime < datetime.time(datetime.today()):
             responseObject = {
                 'status': 'fail',
                 'message': 'Reservation start time already passed!'
