@@ -11,7 +11,8 @@ from service.reserve_room_service import get_reservation, get_meditatoin_room_by
     get_reservation_by_id, add_room_reserved_return_id, add_reservation_return_id, get_room_employee_id
 from service.room_service import get_room_by_id, generate_room_times, get_room_availability_map, get_reservation, \
     update_reservation, get_reservation_all_fields, get_reservation_by_id, get_reservation_by_id_and_employee_id, \
-    delete_reservation, get_rooms, get_reservation_by_room_id_and_employee_id
+    delete_reservation, get_rooms
+
 from shared.authorize import authorize
 
 
@@ -51,6 +52,7 @@ class RoomReserved(MethodView):
     User Resource
     """
 
+
     def post(self):
         # get auth token
         auth_header = request.headers.get('Authorization')
@@ -74,24 +76,23 @@ class RoomReserved(MethodView):
 
                     if reservation is None:
                         new_reservation = Reservation(
-                            meditation_room_id=meditation_room_id,
+                            meditation_room_id = meditation_room_id,
                             employee_id=employee_id,
-                            date_reservation=date,
-                            start_time=start_time,
-                            end_time=end_time
+                            date_reservation = date,
+                            start_time = start_time,
+                            end_time = end_time
                         )
                         new_reservation = add_reservation_return_id(new_reservation)
-                        add_room_reserved_return_id(
-                            Room(meditation_room_id=int(meditation_room_id), reservation_id=int(new_reservation.id)))
+                        add_room_reserved_return_id(Room(meditation_room_id=int(meditation_room_id), reservation_id=int(new_reservation.id)))
                         responseObject = {
-                            'status': 'success',
-                            'message': 'Reservation created'
+                        'status': 'success',
+                        'message': 'Reservation created'
                         }
                         return make_response(jsonify(responseObject)), 200
                     else:
                         responseObject = {
-                            'status': 'success',
-                            'message': 'Room is already reserved'
+                        'status': 'success',
+                        'message': 'Room is already reserved'
                         }
                         return make_response(jsonify(responseObject)), 200
                 except Exception as e:
@@ -116,7 +117,7 @@ class RoomReserved(MethodView):
 
 class ReservationUpdateAPI(MethodView):
     @authorize
-    def post(self, roomId=0):
+    def put(self, reservationId=0):
         """
             Updates the reservation with provided details. First availability should be checked and then update
             Parameters:
@@ -124,7 +125,7 @@ class ReservationUpdateAPI(MethodView):
             Returns:
                     updated reservation status
             """
-        reservation = get_reservation_by_room_id_and_employee_id(roomId, g.user.id)
+        reservation = get_reservation_by_id_and_employee_id(reservationId, g.user.id)
         if not reservation:
             responseObject = {
                 'status': 'fail',
@@ -132,30 +133,16 @@ class ReservationUpdateAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 404
 
-        if reservation.start_time < datetime.time(datetime.today()):
-            responseObject = {
-                'status': 'fail',
-                'message': 'Reservation start time already passed!'
-            }
-            return make_response(jsonify(responseObject)), 400
-
         post_data = request.get_json()
 
-        # meditation_room_id = post_data.get('meditation_room_id')
+        meditation_room_id = post_data.get('meditation_room_id')
         start_time = datetime.strptime(post_data.get('start_time'), '%H:%M:%S').time()
         end_time = datetime.strptime(post_data.get('end_time'), '%H:%M:%S').time()
         date_reservation = datetime.date(datetime.today())
 
-        if start_time < datetime.time(datetime.today()) or end_time < datetime.time(datetime.today()):
-            responseObject = {
-                'status': 'fail',
-                'message': 'Start time or end time can not be past times!'
-            }
-            return make_response(jsonify(responseObject)), 400
-
         try:
             reservation.employee_id = g.user.id
-            # reservation.meditation_room_id = meditation_room_id
+            reservation.meditation_room_id = meditation_room_id
             reservation.date_reservation = date_reservation
             reservation.start_time = start_time
             reservation.end_time = end_time
@@ -175,12 +162,10 @@ class ReservationUpdateAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 409
 
-
 class ReservationAPI(MethodView):
     """
     User Reservations
     """
-
     @authorize
     def post(self):
         # get the post data
@@ -204,7 +189,7 @@ class ReservationAPI(MethodView):
                         'message': 'No reservation.'
                     }
                     return make_response(jsonify(responseObject)), 201
-
+                
                 else:
                     responseObject = {
                         'status': 'success',
@@ -226,12 +211,10 @@ class ReservationAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 401
 
-
 class ShwowRoomsAPI(MethodView):
     """
     Rooms Resource 
-    """
-
+    """ 
     @authorize
     def get(self):
         try:
@@ -247,12 +230,12 @@ class ShwowRoomsAPI(MethodView):
                 'message': 'Some error occurred. Please try again.',
                 'error': repr(e)
             }
-            return make_response(jsonify(responseObject)), 401
+            return make_response(jsonify(responseObject)), 401            
 
 
 class ReservationDeleteAPI(MethodView):
     @authorize
-    def post(self, roomId=0):
+    def delete(self, reservationId=0):
         """
             Deletes the reservation with provided details. First it should be checked if logged in employee has the
             reservation booked under their account
@@ -261,20 +244,13 @@ class ReservationDeleteAPI(MethodView):
             Returns:
                     delete reservation status
             """
-        reservation = get_reservation_by_room_id_and_employee_id(roomId, g.user.id)
+        reservation = get_reservation_by_id_and_employee_id(reservationId, g.user.id)
         if not reservation:
             responseObject = {
                 'status': 'fail',
                 'message': 'Reservation not found!'
             }
             return make_response(jsonify(responseObject)), 404
-
-        if reservation.start_time < datetime.time(datetime.today()):
-            responseObject = {
-                'status': 'fail',
-                'message': 'Reservation start time already passed!'
-            }
-            return make_response(jsonify(responseObject)), 400
 
         try:
             delete_reservation(reservation)
@@ -292,7 +268,13 @@ class ReservationDeleteAPI(MethodView):
             return make_response(jsonify(responseObject)), 409
 
 
+
+
 room_available_time_view = RoomAvailabilityAPI.as_view('room_availability')
+
+
+
+
 reserve_room_view = RoomReserved.as_view('reservation_api')
 reservation_view = ReservationAPI.as_view('show_reservation_api')
 show_rooms_view = ShwowRoomsAPI.as_view('show_rooms_api')
