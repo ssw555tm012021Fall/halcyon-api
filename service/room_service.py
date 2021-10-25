@@ -108,6 +108,13 @@ def get_reservation_by_id_and_employee_id(reservation_id, employee_id):
         Reservation.id == reservation_id).filter(Reservation.employee_id == employee_id).first()
 
 
+def get_reservation_by_room_id_and_employee_id(room_id, employee_id):
+    """ get Reservation object searched from room id, employee_id and today's date"""
+    return session.query(Reservation).filter(
+        Reservation.meditation_room_id == room_id).filter(Reservation.employee_id == employee_id).filter(
+        Reservation.date_reservation == datetime.date(datetime.today())).first()
+
+
 def get_reservation(meditation_room_id, date_reservation, start_time, end_time):
     return session.query(Reservation).filter(Reservation.meditation_room_id == meditation_room_id,
                                              Reservation.date_reservation == date_reservation,
