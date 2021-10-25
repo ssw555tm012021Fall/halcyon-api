@@ -90,3 +90,9 @@ blueprints.add_url_rule(
     view_func=set_goal_view,
     methods=['POST']
 )
+
+blueprints.add_url_rule(
+    '/reminders',
+    view_func=set_goal_view,
+    methods=['GET']
+)
