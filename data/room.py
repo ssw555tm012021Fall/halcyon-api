@@ -18,3 +18,13 @@ class Room(Base):
         self.time_interval = time_interval
         self.start_available_time = start_available_time
         self.end_available_time = end_available_time
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'name': self.room_name,
+            'description': self.description,
+            'timeInterval': self.time_interval,
+            'startAvailableTime': self.start_available_time.strftime("%H:%M:%S"),
+            'endAvailableTime': self.end_available_time.strftime("%H:%M:%S")
+        }

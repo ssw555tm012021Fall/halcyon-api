@@ -19,10 +19,10 @@ def get_room_reserved_by_id(id):
 
 
 def get_reservation(meditation_room_id, date_reservation, start_time, end_time):
-    return session.query(Reservation).filter(Reservation.meditation_room_id == meditation_room_id,
-                                             Reservation.date_reservation == date_reservation,
-                                             Reservation.start_time == start_time,
-                                             Reservation.end_time == end_time
+    return session.query(Reservation).filter(Reservation.meditationRoomId == meditation_room_id,
+                                             Reservation.date == date_reservation,
+                                             Reservation.startTime == start_time,
+                                             Reservation.endTime == end_time
                                              ).first()
 
 
@@ -60,16 +60,16 @@ def add_room_reserved_in_txn(room_reserved):
 def get_room_employee_id(id):
     today = datetime.datetime.now().date()
     now_time = datetime.datetime.now().time()
-    employee_reservation = session.query(Reservation).filter(Reservation.employee_id == id,
-    Reservation.date_reservation == today, Reservation.start_time > now_time).first()
+    employee_reservation = session.query(Reservation).filter(Reservation.employeeId == id,
+                                                             Reservation.date == today, Reservation.startTime > now_time).first()
     if employee_reservation is not None:
-        room = get_room_details(Reservation.meditation_room_id)
+        room = get_room_details(Reservation.meditationRoomId)
         reservation_details = []
         reservation_map = {}
-        reservation_map['employee_id'] = employee_reservation.employee_id
-        reservation_map['date_reservation'] = employee_reservation.date_reservation.strftime("%Y-%m-%d")
-        reservation_map['start_time'] = employee_reservation.start_time.strftime("%H:%M")
-        reservation_map['end_time'] = employee_reservation.end_time.strftime("%H:%M")
+        reservation_map['employeeId'] = employee_reservation.employeeId
+        reservation_map['date'] = employee_reservation.date.strftime("%Y-%m-%d")
+        reservation_map['startTime'] = employee_reservation.startTime.strftime("%H:%M")
+        reservation_map['endTime'] = employee_reservation.endTime.strftime("%H:%M")
         reservation_map['room_name'] = room.room_name
         reservation_map['description'] = room.description
         reservation_details.append(reservation_map)

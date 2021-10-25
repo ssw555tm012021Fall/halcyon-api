@@ -1,6 +1,7 @@
 from flask import Blueprint
 
 from api.auth import registration_view, login_view, user_view, logout_view, confirmation_view, resend_view
+from api.reminders import get_reminders_view
 from api.rooms import room_available_time_view, reserve_room_view, reservation_update_view, reservation_delete_view, \
     show_rooms_view, reservation_view
 from api.sounds import sounds_view, play_sounds_view
@@ -89,4 +90,10 @@ blueprints.add_url_rule(
     '/set-goal',
     view_func=set_goal_view,
     methods=['POST']
+)
+
+blueprints.add_url_rule(
+    '/reminders',
+    view_func=get_reminders_view,
+    methods=['GET', 'PUT']
 )
