@@ -4,6 +4,7 @@ from api.auth import registration_view, login_view, user_view, logout_view, conf
 from api.rooms import room_available_time_view, reserve_room_view, reservation_update_view, reservation_delete_view, \
     show_rooms_view, reservation_view
 from api.sounds import sounds_view, play_sounds_view
+from api.goals import set_goal_view
 
 blueprints = Blueprint('auth', __name__)
 
@@ -82,4 +83,10 @@ blueprints.add_url_rule(
     '/sounds/<soundId>',
     view_func=play_sounds_view,
     methods=['GET']
+)
+
+blueprints.add_url_rule(
+    '/set-goal',
+    view_func=set_goal_view,
+    methods=['POST']
 )
