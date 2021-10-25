@@ -2,6 +2,7 @@ import enum
 
 from sqlalchemy import Column, Integer, DateTime, Time, Enum
 
+from data import db
 from data.db import Base
 
 
@@ -10,18 +11,28 @@ class ReminderType(enum.Enum):
     BREAK = 'break'
 
 
-class Reservation(Base):
+class Reminder(Base):
     __tablename__ = 'reminder'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    employee_id = Column(Integer)
-    start_at = Column(Time)
-    end_at = Column(Time)
-    type = Column('type', Enum(ReminderType))
-    interval = Column(Integer)
+    employeeId = Column('employee_id', Integer)
+    startAt = Column('start_at', Time)
+    endAt = Column('end_at', Time)
+    type = Column('type', Enum(ReminderType, values_callable=lambda obj: [e.value for e in obj]))
+    interval = Column('interval', Integer)
 
-    def __init__(self, employee_id, start_at, end_at, reminder_type, interval):
-        self.employee_id = employee_id
-        self.start_at = start_at
-        self.end_at = end_at
+    def __init__(self, employeeId, startAt, endAt, reminder_type, interval):
+        self.employeeId = employeeId
+        self.startAt = startAt
+        self.endAt = endAt
         self.type = reminder_type
         self.interval = interval
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'employeeId': self.employeeId,
+            'startAt': self.startAt.strftime("%H:%M:%S"),
+            'endAt': self.endAt.strftime("%H:%M:%S"),
+            'type': self.type.value,
+            'interval': self.interval
+        }
