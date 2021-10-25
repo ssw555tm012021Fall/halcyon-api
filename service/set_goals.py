@@ -14,7 +14,7 @@ def get_goal_by_employee_id(employee_id):
     return session.query(Goals).filter(Goals.employee_id == employee_id)
 
 
-def add_gaol(goal):
+def add_goal(goal):
     session.add(goal)
     session.commit()
 
@@ -28,3 +28,4 @@ def update_goal(goal_id, target):
     session.query(Goals).update().where(Goals.id == goal_id).values(target=target)
     session.commit()
     return True
+

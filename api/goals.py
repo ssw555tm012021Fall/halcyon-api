@@ -29,7 +29,7 @@ class SetGoalsAPI(MethodView):
 
                 new_goal = Goals(
                     target = target,
-                    employee_id=700165948337235729
+                    employee_id = g.user.id
                 )
                 goal = add_goal_return_id(new_goal)
                 if goal is None:
