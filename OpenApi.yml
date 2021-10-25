@@ -186,17 +186,17 @@ paths:
                     type: boolean
                   message:
                     type: string
-  /reservation/{reservationId}:
-    put:
+  /rooms/{roomId}/update:
+    post:
       security:
         - bearerAuth: []
       parameters:
         - in: path
-          name: reservationId
+          name: roomId
           schema:
             type: integer
           required: true
-          description: Numeric ID of the reservation to be updated
+          description: Numeric ID of the room for which reservation needs to be updated
       requestBody:
         required: true
         content:
@@ -204,8 +204,6 @@ paths:
             schema:
               type: object
               properties:
-                meditation_room_id:
-                  type: integer
                 start_time:
                   type: string
                   format: 'time'
@@ -255,9 +253,17 @@ paths:
                     type: string
                   status:
                     type: string
-    delete:
+  /rooms/{roomId}/cancel:
+    post:
       security:
         - bearerAuth: []
+      parameters:
+        - in: path
+          name: roomId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the room for which reservation needs to be cancelled
       summary: Cancel a booked reservation
       responses:
         '401':
