@@ -10,12 +10,13 @@ from service.sound_service import get_file_by_id, get_files
 
 
 class SoundsAPI(MethodView):
-    """
-    Retrieve sounds list
-    """
     @authorize
     def get(self):
-        # get the post data
+        """ 
+            Retrieve sounds list
+            parameters: sound type {string}
+            return: sounds   {List}
+        """
         post_data = request.get_json()
         # retrieve all {type} files
         try:
@@ -35,9 +36,13 @@ class SoundsAPI(MethodView):
             return make_response(jsonify(responseObject)), 400
 
 class PlaysoundAPI(MethodView):
-    """Returns sound file"""
     @authorize
     def get(self, soundId=0):
+        """ 
+            Fetch sound 
+            parameters: Sound ID {INT}
+            return: Sound details   {List}
+        """
         try:
             sound = get_file_by_id(soundId)
             responseObject = {
