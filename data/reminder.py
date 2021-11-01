@@ -1,9 +1,5 @@
 import enum
-
 from sqlalchemy import Column, Integer, DateTime, Time, Enum
-
-# from data import db
-# from data.db import Base
 from server import db
 
 

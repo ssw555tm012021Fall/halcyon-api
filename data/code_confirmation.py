@@ -9,7 +9,6 @@ import datetime
 import jwt
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, TIME
 from sqlalchemy.types import Date
-# from data.db import Base
 from server import db
 
 

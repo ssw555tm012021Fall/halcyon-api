@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, DateTime, Time
-# from data.db import Base
 from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR
 
 from server import db

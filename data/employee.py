@@ -1,7 +1,6 @@
 import datetime
 import jwt
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
-# from data.db import Base
 from server import app, db, bcrypt
 from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR
 
