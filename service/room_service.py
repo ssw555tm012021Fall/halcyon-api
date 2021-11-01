@@ -1,14 +1,15 @@
 from datetime import timedelta, datetime, time
 
-from data.db import session
+# from data.db import session
 from data.reservation import Reservation
 from data.room import Room
+from server import db
 from shared.common import is_dirty
 
 
 def get_room_by_id(room_id):
     """ get Room object searched from primary key """
-    return session.query(Room).get(room_id)
+    return db.session.query(Room).get(room_id)
 
 
 def generate_room_times(room, today):
@@ -45,7 +46,7 @@ def get_room_bookings(room, date_reservation):
     """
         Get list of reservations based on room and date of the reservation
         """
-    return session.query(Reservation).filter(Reservation.meditationRoomId == room.id).filter(
+    return db.session.query(Reservation).filter(Reservation.meditationRoomId == room.id).filter(
         Reservation.date == date_reservation).all()
 
 
@@ -99,24 +100,24 @@ def is_time_conflict(room, date, start_time, end_time):
 
 def get_reservation_by_id(reservation_id):
     """ get Reservation object searched from primary key """
-    return session.query(Reservation).get(reservation_id)
+    return db.session.query(Reservation).get(reservation_id)
 
 
 def get_reservation_by_id_and_employee_id(reservation_id, employee_id):
     """ get Reservation object searched from primary key and employeeId """
-    return session.query(Reservation).filter(
+    return db.session.query(Reservation).filter(
         Reservation.id == reservation_id).filter(Reservation.employeeId == employee_id).first()
 
 
 def get_reservation_by_room_id_and_employee_id(room_id, employee_id):
     """ get Reservation object searched from room id, employeeId and today's date"""
-    return session.query(Reservation).filter(
+    return db.session.query(Reservation).filter(
         Reservation.meditationRoomId == room_id).filter(Reservation.employeeId == employee_id).filter(
         Reservation.date == datetime.date(datetime.today())).first()
 
 
 def get_reservation(meditation_room_id, date_reservation, start_time, end_time):
-    return session.query(Reservation).filter(Reservation.meditationRoomId == meditation_room_id,
+    return db.session.query(Reservation).filter(Reservation.meditationRoomId == meditation_room_id,
                                              Reservation.date == date_reservation,
                                              Reservation.startTime == start_time,
                                              Reservation.endTime == end_time
@@ -124,7 +125,7 @@ def get_reservation(meditation_room_id, date_reservation, start_time, end_time):
 
 
 def get_reservation_all_fields(employee_id, meditation_room_id, date_reservation, start_time, end_time):
-    return session.query(Reservation).filter(Reservation.employeeId == employee_id,
+    return db.session.query(Reservation).filter(Reservation.employeeId == employee_id,
                                              Reservation.meditationRoomId == meditation_room_id,
                                              Reservation.date == date_reservation,
                                              Reservation.startTime == start_time,
@@ -139,7 +140,7 @@ def update_reservation(reservation):
         if conflicting_reservation:
             raise ValueError("Conflicting reservation error")
         else:
-            session.commit()
+            db.session.commit()
     return reservation
 
 

@@ -1,9 +1,11 @@
 from sqlalchemy import Column, Integer, String, DateTime, Time
-from data.db import Base
+# from data.db import Base
 from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR
 
+from server import db
 
-class Room(Base):
+
+class Room(db.Model):
     __tablename__ = 'meditation_room'
     id = Column(Integer, primary_key=True, autoincrement=True)
     room_name = Column(String)

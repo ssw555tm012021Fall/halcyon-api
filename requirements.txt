@@ -36,3 +36,6 @@ SQLAlchemy==1.4.25
 sqlalchemy-cockroachdb==1.4.0
 toml==0.10.2
 Werkzeug==2.0.2
+
+Manager~=2.0.3
+Flask-Testing==0.8.1

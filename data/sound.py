@@ -1,11 +1,11 @@
 import datetime
 import jwt
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
-from data.db import Base
-from server import app, bcrypt, BCRYPT_LOG_ROUNDS
+# from data.db import Base
+from server import db
 from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR
 
-class Sound(Base):
+class Sound(db.Model):
     """The Sound class corresponds to the "Sound" database table.
     """
     __tablename__ = 'sound'

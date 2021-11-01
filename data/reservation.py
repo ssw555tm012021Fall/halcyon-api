@@ -1,9 +1,10 @@
 from sqlalchemy import Column, Integer, DateTime, Time
 
-from data.db import Base
+# from data.db import Base
+from server import db
 
 
-class Reservation(Base):
+class Reservation(db.Model):
     __tablename__ = 'reservation'
     id = Column(Integer, primary_key=True, autoincrement=True)
     employeeId = Column('employee_id', Integer)

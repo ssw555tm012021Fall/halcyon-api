@@ -57,7 +57,7 @@ class RegisterAPI(MethodView):
                     is_confirmed=False,
                     first_name='User',
                     last_name='User',
-                    birthday="1990-01-01",
+                    birthday=datetime.datetime.now(),
                     gender='f'
                 )
                 # insert the employee

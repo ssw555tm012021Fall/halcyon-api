@@ -1,8 +1,8 @@
 import datetime
 import jwt
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, Time, Enum
-from data.db import Base
-from server import app, bcrypt, BCRYPT_LOG_ROUNDS
+# from data.db import Base
+from server import app, db
 from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR
 
 import enum
@@ -18,7 +18,7 @@ class Event_Category(enum.Enum):
     break_category = 'break'
 
 
-class Events(Base):
+class Events(db.Model):
     """The Employee class corresponds to the "employee" database table.
     """
     __tablename__ = 'events'

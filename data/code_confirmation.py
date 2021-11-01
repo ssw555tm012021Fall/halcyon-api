@@ -9,9 +9,11 @@ import datetime
 import jwt
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, TIME
 from sqlalchemy.types import Date
-from data.db import Base
+# from data.db import Base
+from server import db
 
-class code_confirmation(Base):
+
+class code_confirmation(db.Model):
     """The code_confirmation class corresponds to the "code_confirmation" database table.
     """
     __tablename__ = 'code_confirmation'

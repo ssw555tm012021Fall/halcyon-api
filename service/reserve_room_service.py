@@ -1,25 +1,26 @@
 from sqlalchemy_cockroachdb import run_transaction
 
-from data.db import session, sessionmaker
+# from data.db import session, sessionmaker
 from data.reservation import Reservation
 from data.room import Room
+from server import db
 from service.room_service import get_room_details
 import datetime
 
 def get_meditatoin_room_by_id(id):
-    return session.query(Room).filter(Room.id == id).first()
+    return db.session.query(Room).filter(Room.id == id).first()
 
 
 def get_reservation_by_id(id):
-    return session.query(Reservation).filter(Reservation.id == id).first()
+    return db.session.query(Reservation).filter(Reservation.id == id).first()
 
 
 def get_room_reserved_by_id(id):
-    return session.query(Room).filter(Room.id == id).first()
+    return db.session.query(Room).filter(Room.id == id).first()
 
 
 def get_reservation(meditation_room_id, date_reservation, start_time, end_time):
-    return session.query(Reservation).filter(Reservation.meditationRoomId == meditation_room_id,
+    return db.session.query(Reservation).filter(Reservation.meditationRoomId == meditation_room_id,
                                              Reservation.date == date_reservation,
                                              Reservation.startTime == start_time,
                                              Reservation.endTime == end_time
@@ -27,40 +28,40 @@ def get_reservation(meditation_room_id, date_reservation, start_time, end_time):
 
 
 def add_reservation(reservation):
-    session.add(reservation)
-    session.commit()
+    db.session.add(reservation)
+    db.session.commit()
 
 
 def add_reservation_return_id(reservation):
-    session.add(reservation)
-    session.commit()
-    session.refresh(reservation)
+    db.session.add(reservation)
+    db.session.commit()
+    db.session.refresh(reservation)
     return reservation
 
 
 def add_reservation_in_txn(reservation):
-    return run_transaction(sessionmaker, lambda sess: sess.add(reservation))
+    return run_transaction(db.sessionmaker, lambda sess: sess.add(reservation))
 
 
 def add_room_reserved(room_reserved):
-    session.add(room_reserved)
-    session.commit()
+    db.session.add(room_reserved)
+    db.session.commit()
 
 
 def add_room_reserved_return_id(room_reserved):
-    session.add(room_reserved)
-    session.commit()
-    session.refresh(room_reserved)
+    db.session.add(room_reserved)
+    db.session.commit()
+    db.session.refresh(room_reserved)
     return room_reserved
 
 
 def add_room_reserved_in_txn(room_reserved):
-    return run_transaction(sessionmaker, lambda sess: sess.add(room_reserved))
+    return run_transaction(db.sessionmaker, lambda sess: sess.add(room_reserved))
 
 def get_room_employee_id(id):
     today = datetime.datetime.now().date()
     now_time = datetime.datetime.now().time()
-    employee_reservation = session.query(Reservation).filter(Reservation.employeeId == id,
+    employee_reservation = db.session.query(Reservation).filter(Reservation.employeeId == id,
                                                              Reservation.date == today, Reservation.startTime > now_time).first()
     if employee_reservation is not None:
         room = get_room_details(Reservation.meditationRoomId)

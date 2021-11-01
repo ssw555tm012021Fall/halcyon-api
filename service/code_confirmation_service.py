@@ -7,34 +7,36 @@
 """
 from sqlalchemy_cockroachdb import run_transaction
 
-from data.db import session, sessionmaker
+# from data.db import session, sessionmaker
+from server import db
 from data.code_confirmation import code_confirmation
 
+
 def get_code_confirmation_by_id(id):
-    return session.query(code_confirmation).filter(code_confirmation.id == id).first()
+    return db.session.query(code_confirmation).filter(code_confirmation.id == id).first()
 
 
 def get_code_confirmation_by_public_id(public_id):
-    return session.query(code_confirmation).filter(code_confirmation.public_id == public_id).first()
+    return db.session.query(code_confirmation).filter(code_confirmation.public_id == public_id).first()
 
 
 def get_code_confirmation_by_public_id_expunged(public_id):
-    return session.expunge(session.query(code_confirmation).filter(code_confirmation.public_id == public_id).first())
+    return db.session.expunge(db.session.query(code_confirmation).filter(code_confirmation.public_id == public_id).first())
 
 
 def add_code_confirmation(code_confirmation):
-    session.add(code_confirmation)
-    session.commit()
+    db.session.add(code_confirmation)
+    db.session.commit()
 
 def get_code_confirmation_by_employee_id(employee_id):
-    return session.query(code_confirmation).filter(code_confirmation.employee_id == employee_id).first()
+    return db.session.query(code_confirmation).filter(code_confirmation.employee_id == employee_id).first()
 
 def add_employee_in_txn(code_confirmation):
-    return run_transaction(sessionmaker, lambda sess: sess.add(code_confirmation))
+    return run_transaction(db.sessionmaker, lambda sess: sess.add(code_confirmation))
 
 def update_code(id, new_code):
-    code = session.query(code_confirmation).filter(code_confirmation.id == id).first()
+    code = db.session.query(code_confirmation).filter(code_confirmation.id == id).first()
     code.code = new_code
-    session.commit()
+    db.session.commit()
 
 
