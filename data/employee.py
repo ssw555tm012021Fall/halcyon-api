@@ -1,11 +1,11 @@
 import datetime
 import jwt
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
-from data.db import Base
-from server import app, bcrypt, BCRYPT_LOG_ROUNDS
+from server import app, db, bcrypt
 from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR
 
-class Employee(Base):
+
+class Employee(db.Model):
     """The Employee class corresponds to the "employee" database table.
     """
     __tablename__ = 'employee'
@@ -24,7 +24,7 @@ class Employee(Base):
         """
         self.email = email
         self.password = bcrypt.generate_password_hash(
-            password, BCRYPT_LOG_ROUNDS
+            password, app.config.get('BCRYPT_LOG_ROUNDS')
         ).decode()
         self.first_name = first_name
         self.is_confirmed = is_confirmed

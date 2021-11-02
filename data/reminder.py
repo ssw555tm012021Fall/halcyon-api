@@ -1,9 +1,6 @@
 import enum
-
 from sqlalchemy import Column, Integer, DateTime, Time, Enum
-
-from data import db
-from data.db import Base
+from server import db
 
 
 class ReminderType(enum.Enum):
@@ -11,7 +8,7 @@ class ReminderType(enum.Enum):
     BREAK = 'break'
 
 
-class Reminder(Base):
+class Reminder(db.Model):
     __tablename__ = 'reminder'
     id = Column(Integer, primary_key=True, autoincrement=True)
     employeeId = Column('employeeId', Integer)

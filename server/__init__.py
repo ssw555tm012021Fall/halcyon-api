@@ -1,8 +1,10 @@
 # server/__init__.py
 
+import os
 from flask import Flask, jsonify
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 import urllib.request
 import shutil
 
@@ -11,14 +13,16 @@ CORS(app)
 
 app.config['SECRET_KEY'] = 'your_super_secret_key'
 
-# app_settings = os.getenv(
-#     'APP_SETTINGS',
-#     'server.config.DevelopmentConfig'
-# )
-# app.config.from_object(app_settings)
+app_settings = os.getenv(
+    'APP_SETTINGS',
+    'server.config.DevelopmentConfig'
+)
+app.config.from_object(app_settings)
 
 bcrypt = Bcrypt(app)
-BCRYPT_LOG_ROUNDS = 12
+# BCRYPT_LOG_ROUNDS = 12
+
+db = SQLAlchemy(app)
 
 from server.endpoints import blueprints
 app.register_blueprint(blueprints)
