@@ -6,6 +6,7 @@ from api.rooms import room_available_time_view, reserve_room_view, reservation_u
     show_rooms_view, reservation_view
 from api.sounds import sounds_view, play_sounds_view
 from api.goals import set_goal_view
+from api.moods import moods_view
 
 blueprints = Blueprint('auth', __name__)
 
@@ -96,4 +97,10 @@ blueprints.add_url_rule(
     '/reminders',
     view_func=get_reminders_view,
     methods=['GET', 'PUT']
+)
+# Moods 
+blueprints.add_url_rule(
+    '/moods/activities',
+    view_func=moods_view,
+    methods=['GET']
 )
