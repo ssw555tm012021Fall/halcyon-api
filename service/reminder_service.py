@@ -1,4 +1,3 @@
-# from data.db import session
 from data.reminder import Reminder
 from server import db
 from shared.common import is_dirty
