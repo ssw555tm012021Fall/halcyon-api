@@ -24,17 +24,14 @@ class PersonalityTestAPI(MethodView):
                     {List[PersonalityQuestions]}
             """
         try:
-            questions = get_all_questions()
-            options = get_all_options()
+            response_questions = get_all_questions_with_options()
 
-            if not questions or len(questions) == 0:
+            if not response_questions or len(response_questions) == 0:
                 responseObject = {
                     'status': 'fail',
                     'message': 'No questions found!'
                 }
                 return make_response(jsonify(responseObject)), 404
-
-            response_questions = get_all_questions_with_options()
 
             responseObject = {
                 'status': 'success',
