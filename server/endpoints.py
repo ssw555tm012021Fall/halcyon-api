@@ -105,7 +105,7 @@ blueprints.add_url_rule(
 blueprints.add_url_rule(
     '/personality/questions',
     view_func=get_personality_questions_view,
-    methods=['GET']
+    methods=['GET', 'POST']
 )
 
 # Moods 
