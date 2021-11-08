@@ -3,7 +3,7 @@ from sqlalchemy.dialects import registry
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_base = 'cockroachdb://kavish:erKaCOuWe-zIMxPe@free-tier.gcp-us-central1.cockroachlabs.cloud:26257/second-jaguar' \
-          '-3728.defaultdb?sslmode=verify-full&sslrootcert=root.crt '
+          '-3728.defaultdb?sslmode=verify-full&sslrootcert=root.crt'
 
 
 class BaseConfig:
