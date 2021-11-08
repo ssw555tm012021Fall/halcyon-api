@@ -1,6 +1,7 @@
 from flask import Blueprint
 
 from api.auth import registration_view, login_view, user_view, logout_view, confirmation_view, resend_view
+from api.personality import get_personality_questions_view
 from api.reminders import get_reminders_view
 from api.rooms import room_available_time_view, reserve_room_view, reservation_update_view, reservation_delete_view, \
     show_rooms_view, reservation_view
@@ -93,11 +94,20 @@ blueprints.add_url_rule(
     methods=['POST']
 )
 
+# Reminders
 blueprints.add_url_rule(
     '/reminders',
     view_func=get_reminders_view,
     methods=['GET', 'PUT']
 )
+
+# Personality test
+blueprints.add_url_rule(
+    '/personality/questions',
+    view_func=get_personality_questions_view,
+    methods=['GET', 'POST']
+)
+
 # Moods 
 blueprints.add_url_rule(
     '/moods/activities',

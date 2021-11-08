@@ -2,6 +2,8 @@ from datetime import datetime
 
 from data.code_confirmation import code_confirmation
 from data.employee import Employee
+from data.personality_options import PersonalityOptions
+from data.personality_questions import PersonalityQuestions
 from data.sound import Sound
 from server import db
 
@@ -53,3 +55,30 @@ def create_sound2():
     db.session.commit()
     db.session.refresh(sound)
     return sound
+
+
+def create_personality_question_and_options():
+    question = PersonalityQuestions(
+        content='At a party do you',
+        index=1
+    )
+    db.session.add(question)
+    db.session.commit()
+    db.session.refresh(question)
+    option1 = PersonalityOptions(
+        questionId=question.id,
+        content='Interact with many, including strangers',
+        index=1,
+        value='e'
+    )
+    db.session.add(option1)
+    db.session.commit()
+    option2 = PersonalityOptions(
+        questionId=question.id,
+        content='Interact with a few, known to you',
+        index=2,
+        value='i'
+    )
+    db.session.add(option2)
+    db.session.commit()
+    return question

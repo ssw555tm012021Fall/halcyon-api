@@ -3,7 +3,8 @@ import unittest
 from server import app, db
 from flask_testing import TestCase
 
-from tests.helper import create_active_user, create_confirmation_code, create_sound1, create_sound2
+from tests.helper import create_active_user, create_confirmation_code, create_sound1, create_sound2, \
+    create_personality_question_and_options
 
 
 class TestBase(TestCase):
@@ -21,6 +22,7 @@ class TestBase(TestCase):
         create_confirmation_code(new_active_user)
         create_sound1()
         create_sound2()
+        create_personality_question_and_options()
 
     def tearDown(self):
         db.session.remove()
