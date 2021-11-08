@@ -22,4 +22,3 @@ class MoodsTestCases(TestBase):
             response = get_moods(self, login_data['auth_token'])
             data = json.loads(response.data.decode())
             self.assertEqual(200, response.status_code)
-
