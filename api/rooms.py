@@ -59,7 +59,7 @@ class RoomReserved(MethodView):
     """
     User Resource
     """
-
+    @authorize
     def post(self):
         # get auth token
         auth_header = request.headers.get('Authorization')

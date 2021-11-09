@@ -6,7 +6,7 @@ from api.reminders import get_reminders_view
 from api.rooms import room_available_time_view, reserve_room_view, reservation_update_view, reservation_delete_view, \
     show_rooms_view, reservation_view
 from api.sounds import sounds_view, play_sounds_view
-from api.goals import set_goal_view
+from api.goals import set_goal_view, check_goal_view
 from api.moods import moods_view
 
 blueprints = Blueprint('auth', __name__)
@@ -91,6 +91,11 @@ blueprints.add_url_rule(
 blueprints.add_url_rule(
     '/set-goal',
     view_func=set_goal_view,
+    methods=['POST']
+)
+blueprints.add_url_rule(
+    '/check-goal',
+    view_func=check_goal_view,
     methods=['POST']
 )
 

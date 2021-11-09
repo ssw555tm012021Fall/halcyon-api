@@ -23,12 +23,12 @@ class Events(db.Model):
     __tablename__ = 'events'
     id = Column(Integer, primary_key=True, autoincrement=True)
     employee_id = Column(Integer)
-    state = Column('event_state', Enum(Event_State)),
-    category = Column('event_category', Enum(Event_Category))
+    state = Column('state', Enum(Event_State)),
+    category = Column('category', Enum(Event_Category))
     length = Column(Integer)
     created_at = Column(Time)
 
-    def __init__(self, employee_id, target, state, category, length, created_at):
+    def __init__(self, employee_id, state, category, length, created_at):
         self.employee_id = employee_id
         self.state = state
         self.category = category

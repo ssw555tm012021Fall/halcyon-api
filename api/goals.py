@@ -18,6 +18,7 @@ class SetGoalsAPI(MethodView):
     """
     User Reservations
     """
+    @authorize
     def post(self):
         # get the post data
         post_data = request.get_json()
@@ -79,6 +80,7 @@ class CheckGoalsAPI(MethodView):
     """
     User Reservations
     """
+    @authorize
     def post(self):
         # get the post data
         post_data = request.get_json()
