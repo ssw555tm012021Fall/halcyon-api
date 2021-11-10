@@ -3,6 +3,8 @@ from data.events import Events
 from data.goals import Goals
 from server import db
 from shared.common import is_dirty
+from sqlalchemy import delete
+
 
 
 def get_goal_by_id(goal_id):
@@ -27,6 +29,12 @@ def add_goal_return_id(goal):
 
 def update_goal(goal_id, target):
     db.session.query(Goals).update().where(Goals.id == goal_id).values(target=target)
+    db.session.commit()
+    return True
+
+
+def delete_goal(goal_id):
+    delete(Goals).where(Goals.id == goal_id)
     db.session.commit()
     return True
 

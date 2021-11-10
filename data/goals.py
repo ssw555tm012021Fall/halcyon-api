@@ -1,20 +1,26 @@
 import datetime
 import jwt
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, Time
 from server import app, db
-from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR
+from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR, TIMESTAMP
 
 class Goals(db.Model):
     """The Employee class corresponds to the "employee" database table.
     """
-    __tablename__ = 'goals'
+    __tablename__ = 'goal'
     id = Column(Integer, primary_key=True, autoincrement=True)
     employee_id = Column(Integer)
     target = Column(Integer)
+    category = Column(String)
+    frequency = Column(String)
+    created_at = Column('created_at', Time)
 
-    def __init__(self, employee_id, target):
+    def __init__(self, employee_id, target, frequency, category, created_at):
         self.employee_id = employee_id
         self.target = target
+        self.frequency = frequency
+        self.category = category
+        self.created_at = created_at
 
     def encode_auth_token(self, user_id):
         """
