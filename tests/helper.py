@@ -11,7 +11,7 @@ today = datetime.today()
 
 
 def create_active_user():
-    employee = Employee('viyetak@stevens.edu', 'Password123', '', True, '', today, 'f')
+    employee = Employee('viyetak@stevens.edu', 'Password123', '', True, '', today, 'f', False)
     db.session.add(employee)
     db.session.commit()
     db.session.refresh(employee)

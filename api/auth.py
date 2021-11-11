@@ -57,8 +57,9 @@ class RegisterAPI(MethodView):
                     is_confirmed=False,
                     first_name='User',
                     last_name='User',
-                    birthday=datetime.datetime.now(),
-                    gender='f'
+                    birthday=None,
+                    gender='f',
+                    is_depressed = None
                 )
                 # insert the employee
                 saved_employee = add_employee_return_id(employee)

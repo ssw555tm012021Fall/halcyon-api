@@ -6,7 +6,7 @@ from flask.views import MethodView
 from jinja2 import Environment, FileSystemLoader
 from shared.authorize import authorize
 from service.moods_service import get_moods
-
+from service.employee_service import set_isdepressed
 
 class MoodsAPI(MethodView):
     @authorize
@@ -32,7 +32,31 @@ class MoodsAPI(MethodView):
             }
             return make_response(jsonify(responseObject)), 400
 
+class IsdepressedAPI(MethodView):
+    @authorize
+    def put(self):
+        """
+            Set employee is_depressed
+        """
+        try:
+            post_data = request.get_json()
+            employee_id = g.user.id
+            isDepressed = post_data.get('isDepressed')
+            set_isdepressed(employee_id, isDepressed)
+            responseObject = {
+                'status': 'success'
+            }
+            return make_response(jsonify(responseObject)), 200
+
+        except Exception as e:
+            responseObject = {
+                'status': 'fail',
+                'message': 'Error in updating isDepressed!',
+                'error': str(e)
+            }
+            return make_response(jsonify(responseObject)), 400
+
 # define the API resources
 moods_view = MoodsAPI.as_view('MoodsAPI')
-
+isdepressed_view = IsdepressedAPI.as_view('isdepressedAPI')
 
