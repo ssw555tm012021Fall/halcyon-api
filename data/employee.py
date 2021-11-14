@@ -17,8 +17,9 @@ class Employee(db.Model):
     is_confirmed = Column(BOOLEAN)
     birthday = Column(DateTime)
     gender = Column(CHAR)
+    is_depressed = Column(BOOLEAN)
 
-    def __init__(self, email, password, first_name, is_confirmed,last_name,birthday,gender):
+    def __init__(self, email, password, first_name, is_confirmed,last_name,birthday,gender,is_depressed):
         """
         TODO: add all the fields of Employee
         """
@@ -32,6 +33,7 @@ class Employee(db.Model):
         self.birthday = birthday
         self.gender = gender
         # self.created = datetime.datetime.now()
+        self.is_depressed = is_depressed
 
     def encode_auth_token(self, user_id):
         """

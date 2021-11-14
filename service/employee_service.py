@@ -39,3 +39,7 @@ def activate_account(email):
 def add_employee_in_txn(employee):
     return run_transaction(db.sessionmaker, lambda sess: sess.add(employee))
 
+def set_isdepressed(id,isdepressed):
+    user = db.session.query(Employee).filter(Employee.id == id).first()
+    user.is_depressed = isdepressed
+    db.session.commit()
