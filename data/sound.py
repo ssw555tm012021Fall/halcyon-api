@@ -15,8 +15,9 @@ class Sound(db.Model):
     credit = Column(String)
     url = Column(String)
     type = Column(String)
+    picture = Column(String)
 
-    def __init__(self, description, length, name, credit, url, sound_type):
+    def __init__(self, description, length, name, credit, url, sound_type, picture):
         """
         TODO: add all the fields of Sounds
         """
@@ -26,3 +27,4 @@ class Sound(db.Model):
         self.credit = credit
         self.url = url
         self.type = sound_type
+        self.picture = picture

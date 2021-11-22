@@ -11,13 +11,13 @@ def test_new_employee():
     THEN check the email and hashed_password are defined correctly
     """
     today = datetime.today()
-    employee = Employee('viyeta@gmail.com', 'FlaskIsAwesome', '', False, '', today, 'f')
+    employee = Employee('viyeta@gmail.com', 'FlaskIsAwesome', '', False, '', today, 'f', False)
     assert employee.email == 'viyeta@gmail.com'
     assert employee.password != 'FlaskIsAwesome'
     assert employee.birthday == today
 
 
 def test_employee_password():
-    employee = Employee('viyeta@gmail.com', 'FlaskIsAwesome', '', False, '', datetime.today(), 'f')
+    employee = Employee('viyeta@gmail.com', 'FlaskIsAwesome', '', False, '', datetime.today(), 'f', False)
     assert bcrypt.check_password_hash(
         employee.password, 'FlaskIsAwesome')
