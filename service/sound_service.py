@@ -13,7 +13,8 @@ def get_file_by_id(file_id):
     sound_map['description'] = sound_file.description
     sound_map['length'] = sound_file.length
     sound_map['credit'] = sound_file.credit
-    sound_map['url'] = sound_file.url
+    sound_map['audio'] = sound_file.url
+    sound_map['picture'] = sound_file.picture
     return sound_map
 
 def get_files(sound_type):
@@ -26,7 +27,8 @@ def get_files(sound_type):
         sound_map['description'] = sound_file.description
         sound_map['length'] = sound_file.length
         sound_map['credit'] = sound_file.credit
-        sound_map['url'] = sound_file.url
+        sound_map['audio'] = sound_file.url
+        sound_map['picture'] = sound_file.picture
         file_list.append(sound_map)
     return file_list
 

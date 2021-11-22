@@ -12,13 +12,15 @@ class Room(db.Model):
     time_interval = Column(Integer)
     start_available_time = Column(Time)
     end_available_time = Column(Time)
+    picture = Column(String)
 
-    def __init__(self, room_name, description, time_interval, start_available_time, end_available_time):
+    def __init__(self, room_name, description, time_interval, start_available_time, end_available_time, picture):
         self.room_name = room_name
         self.description = description
         self.time_interval = time_interval
         self.start_available_time = start_available_time
         self.end_available_time = end_available_time
+        self.picture = picture
 
     def serialize(self):
         return {
@@ -27,5 +29,6 @@ class Room(db.Model):
             'description': self.description,
             'timeInterval': self.time_interval,
             'startAvailableTime': self.start_available_time.strftime("%H:%M:%S"),
-            'endAvailableTime': self.end_available_time.strftime("%H:%M:%S")
+            'endAvailableTime': self.end_available_time.strftime("%H:%M:%S"),
+            'picture': self.picture
         }

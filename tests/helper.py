@@ -35,8 +35,9 @@ def create_sound1():
         name='rain',
         length=1822,
         credit='Me',
-        url='https://ssw-555-halcyon.s3.amazonaws.com/sound/rain.mp3',
-        sound_type='sound'
+        url='https://ssw-555-halcyon.s3.amazonaws.com/sound/audio/rain.mp3',
+        sound_type='sound',
+        picture='https://ssw-555-halcyon.s3.amazonaws.com/sound/images/rain.jpg'
     )
     db.session.add(sound)
     db.session.commit()
@@ -48,8 +49,9 @@ def create_sound2():
         name='Three minute breathing',
         length=216000,
         credit='Peter Morgan',
-        url='https://ssw-555-halcyon.s3.amazonaws.com/meditation/3-min-breathing-p-morgan.mp3',
-        sound_type='guide'
+        url='https://ssw-555-halcyon.s3.amazonaws.com/meditation/audio/3-min-breathing-p-morgan.mp3',
+        sound_type='guide',
+        picture='https://ssw-555-halcyon.s3.amazonaws.com/meditation/images/3-min-breathing-p-morgan.jpg'
     )
     db.session.add(sound)
     db.session.commit()

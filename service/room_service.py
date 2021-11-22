@@ -145,7 +145,7 @@ def update_reservation(reservation):
 
 
 def get_rooms():
-    rooms = session.query(Room).all()
+    rooms = db.session.query(Room).all()
     room_list = []
     for room in rooms:
         room_map = {}
@@ -155,15 +155,16 @@ def get_rooms():
         room_map['time_interval'] = room.time_interval
         room_map['start_available_time'] = room.start_available_time.strftime("%H:%M")
         room_map['end_available_time'] = room.end_available_time.strftime("%H:%M")
+        room_map['picture'] = room.picture
         room_list.append(room_map)
     return room_list
 
 
 def get_room_details(room_id):
-    room = session.query(Room).filter(Room.id == room_id).first()
+    room = db.session.query(Room).filter(Room.id == room_id).first()
     return room
 
 
 def delete_reservation(reservation):
-    session.delete(reservation)
-    session.commit()
+    db.session.delete(reservation)
+    db.session.commit()
