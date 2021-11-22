@@ -8,7 +8,6 @@ from api.rooms import room_available_time_view, reserve_room_view, reservation_u
 from api.sounds import sounds_view, play_sounds_view
 from api.goals import set_goal_view, check_goal_view
 from api.moods import moods_view, isdepressed_view
-from api.awards import awards_view
 
 blueprints = Blueprint('auth', __name__)
 
@@ -124,11 +123,4 @@ blueprints.add_url_rule(
     '/moods/isdepressed',
     view_func=isdepressed_view,
     methods=['PUT']
-)
-
-#award
-blueprints.add_url_rule(
-    '/give-award',
-    view_func=awards_view,
-    methods=['POST']
 )
