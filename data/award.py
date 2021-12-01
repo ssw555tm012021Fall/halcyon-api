@@ -3,7 +3,7 @@ import jwt
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, Time
 from server import app, db
 from sqlalchemy.sql.sqltypes import BOOLEAN, CHAR, TIMESTAMP
-import Enum
+import enum
 
 class Event_State(enum.Enum):
     completed = 'completed'
